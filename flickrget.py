@@ -10,11 +10,33 @@ import os
 import sys
 import xml
 
-#print(len(sys.argv))
-#print(sys.argv)
+class UrlMode:
+	sq = 0
+	t = 1
+	s = 2
+	q = 3
+	m = 4
+	n = 5
+	z = 6
+	c = 7
+	l = 8
+	o = 9
+
+	str = {
+		sq : "url_sq",
+		t : "url_t",
+		s : "url_s",
+		q : "url_q",
+		m : "url_m",
+		n : "url_n",
+		z : "url_z",
+		c : "url_c",
+		l : "url_l",
+		o : "url_o"}
 
 api_key = ''
 config_file_name = '.flickrget.cfg'
+url_mode = UrlMode.m
 
 def get_config_file_path():
 	return os.path.join(os.path.expanduser('~'), config_file_name)
@@ -78,7 +100,8 @@ def main():
 	while page < pages:
 		photos = flickr.photos_search(
 			tags="日本",per_page='100',media='photos', page=str(page),
-			extras='url_m,url_n,url_c,url_l,url_o')
+			extras='%(url_mode)s' %
+				{'url_mode' : UrlMode.str[url_mode]} )
 
 		if not photos.attrib['stat'] == 'ok':
 			print('not ok')
@@ -93,7 +116,7 @@ def main():
 		if True:
 			for photo in photos.iter('photo'):
 				#print( xml.etree.ElementTree.dump(photo) )
-				print( photo.attrib['url_m'] )
+				print( photo.attrib[UrlMode.str[url_mode]] )
 
 main()
 
