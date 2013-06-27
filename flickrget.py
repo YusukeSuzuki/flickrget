@@ -126,10 +126,9 @@ def main():
 
 		print(UrlMode.str[url_mode])
 
-		if True:
-			for photo in photos.iter('photo'):
-				#print( xml.etree.ElementTree.dump(photo) )
-				print( photo.attrib[UrlMode.str[url_mode]] )
+		for photo in photos.iter('photo'):
+			#print( xml.etree.ElementTree.dump(photo) )
+			print( photo.attrib[UrlMode.str[url_mode]] )
 
 main()
 
