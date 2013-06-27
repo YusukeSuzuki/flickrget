@@ -46,16 +46,23 @@ def get_env():
 		print('use: %(command)s --set_api_key key'% {'command': sys.argv[0]})
 		exit(0)
 
+def show_api_key():
+	get_env()
+	print(api_key)
+
 def main():
 	try:
 		options, args = getopt.getopt(sys.argv[1:], 'h',
-			['help', 'set_api_key='])
+			['help', 'set_api_key=', 'api_key'])
 	except getopt.GetoptError:
 		print('arg error')
 		sys.exit(2)
 
 	for option, arg in options:
-		if option in ("--set_api_key"):
+		if option in ("--api_key"):
+			show_api_key()
+			exit(0)
+		elif option in ("--set_api_key"):
 			set_api_key(arg)
 			exit(0)
 		elif option in ('-h', '--help'):
