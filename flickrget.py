@@ -7,6 +7,7 @@ import ConfigParser
 
 import getopt
 import os
+import signal
 import sys
 import xml
 
@@ -23,16 +24,11 @@ class UrlMode:
 	o = 9
 
 	str = {
-		sq : "url_sq",
-		t : "url_t",
-		s : "url_s",
-		q : "url_q",
-		m : "url_m",
-		n : "url_n",
-		z : "url_z",
-		c : "url_c",
-		l : "url_l",
-		o : "url_o"}
+		sq : 'url_sq', t : 'url_t', s : 'url_s', q : 'url_q', m : 'url_m',
+		n : 'url_n', z : 'url_z', c : 'url_c', l : 'url_l', o : 'url_o' }
+	str_to_value = {
+		'sq' : sq, 't' : t, 's' : s, 'q' : q, 'm' : m,
+		'n' : n, 'z' : z, 'c' : c, 'l' : l, 'o' : o, }
 
 api_key = ''
 config_file_name = '.flickrget.cfg'
@@ -72,10 +68,21 @@ def show_api_key():
 	get_env()
 	print(api_key)
 
+def set_url_mode(x):
+	if UrlMode.str_to_value.has_key(x):
+		global url_mode
+		url_mode = UrlMode.str_to_value[x]
+	else:
+		print('invalid url mode string')
+		exit(0)
+
+def interupt(signum, frame):
+	exit(0)
+
 def main():
 	try:
 		options, args = getopt.getopt(sys.argv[1:], 'h',
-			['help', 'set_api_key=', 'api_key'])
+			['help', 'set_api_key=', 'api_key', 'url_mode='])
 	except getopt.GetoptError:
 		print('arg error')
 		sys.exit(2)
@@ -87,6 +94,9 @@ def main():
 		elif option in ("--set_api_key"):
 			set_api_key(arg)
 			exit(0)
+		elif option in ("--url_mod"):
+			set_url_mode(arg)
+			exit(0)
 		elif option in ('-h', '--help'):
 			print_help()
 
@@ -96,6 +106,8 @@ def main():
 
 	page = 0
 	pages = 1
+
+	signal.signal(signal.SIGINT, interupt)
 
 	while page < pages:
 		photos = flickr.photos_search(
@@ -109,9 +121,10 @@ def main():
 
 		pages = int(photos.find('photos').attrib['pages'],10)
 		page = int(photos.find('photos').attrib['page'], 10)
-		#print( 'page = %(page)d, pages = %(pages)d' % {'page' : page, 'pages' : pages} )
 
 		page += 1
+
+		print(UrlMode.str[url_mode])
 
 		if True:
 			for photo in photos.iter('photo'):
