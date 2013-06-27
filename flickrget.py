@@ -76,7 +76,7 @@ def set_url_mode(x):
 		print('invalid url mode string')
 		exit(0)
 
-def interupt(signum, frame):
+def interrupt(signum, frame):
 	exit(0)
 
 def main():
@@ -107,7 +107,7 @@ def main():
 	page = 0
 	pages = 1
 
-	signal.signal(signal.SIGINT, interupt)
+	signal.signal(signal.SIGINT, interrupt)
 
 	while page < pages:
 		photos = flickr.photos_search(
