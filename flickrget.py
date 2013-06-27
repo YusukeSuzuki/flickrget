@@ -94,9 +94,8 @@ def main():
 		elif option in ("--set_api_key"):
 			set_api_key(arg)
 			exit(0)
-		elif option in ("--url_mod"):
+		elif option in ("--url_mode"):
 			set_url_mode(arg)
-			exit(0)
 		elif option in ('-h', '--help'):
 			print_help()
 
@@ -123,8 +122,6 @@ def main():
 		page = int(photos.find('photos').attrib['page'], 10)
 
 		page += 1
-
-		print(UrlMode.str[url_mode])
 
 		for photo in photos.iter('photo'):
 			#print( xml.etree.ElementTree.dump(photo) )
