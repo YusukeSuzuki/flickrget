@@ -92,10 +92,13 @@ def interrupt(signum, frame):
 def main():
 	try:
 		options, args = getopt.getopt(sys.argv[1:], 'h',
-			['help', 'set_api_key=', 'api_key', 'url_mode=', 'tags=', 'text='])
+			['help', 'set_api_key=', 'api_key', 'url_mode=', 'tags=', 'text=',
+			'max='])
 	except getopt.GetoptError:
 		print('arg error')
 		sys.exit(2)
+
+	max_out = sys.maxint
 
 	for option, arg in options:
 		if option in ("--api_key"):
@@ -110,6 +113,8 @@ def main():
 			set_text(arg)
 		elif option in ("--url_mode"):
 			set_url_mode(arg)
+		elif option in ("--max"):
+			max_out = int(arg)
 		elif option in ('-h', '--help'):
 			print_help()
 
@@ -119,6 +124,7 @@ def main():
 
 	page = 0
 	pages = 1
+	output_count = 0
 
 	signal.signal(signal.SIGINT, interrupt)
 
@@ -127,7 +133,7 @@ def main():
 	if not text and not tags:
 		tags = 'flickr'
 
-	while page < pages:
+	while page < pages and output_count < max_out:
 		photos = flickr.photos_search(
 			tags=tags, text=text, per_page='100', media='photos', page=str(page),
 			extras='%(url_mode)s' %
@@ -143,7 +149,12 @@ def main():
 		page += 1
 
 		for photo in photos.iter('photo'):
-			print( photo.attrib[UrlMode.str[url_mode]] )
+			if photo.attrib.has_key(UrlMode.str[url_mode]):
+				print( photo.attrib[UrlMode.str[url_mode]] )
+				output_count += 1
+
+			if not output_count < max_out:
+				break
 
 main()
 
