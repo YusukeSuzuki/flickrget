@@ -33,6 +33,8 @@ class UrlMode:
 api_key = ''
 config_file_name = '.flickrget.cfg'
 url_mode = UrlMode.m
+tags = ''
+text = ''
 
 def get_config_file_path():
 	return os.path.join(os.path.expanduser('~'), config_file_name)
@@ -76,13 +78,21 @@ def set_url_mode(x):
 		print('invalid url mode string')
 		exit(0)
 
+def set_tags(x):
+	global tags
+	tags = x
+
+def set_text(x):
+	global text
+	text = x
+
 def interrupt(signum, frame):
 	exit(0)
 
 def main():
 	try:
 		options, args = getopt.getopt(sys.argv[1:], 'h',
-			['help', 'set_api_key=', 'api_key', 'url_mode='])
+			['help', 'set_api_key=', 'api_key', 'url_mode=', 'tags=', 'text='])
 	except getopt.GetoptError:
 		print('arg error')
 		sys.exit(2)
@@ -94,6 +104,10 @@ def main():
 		elif option in ("--set_api_key"):
 			set_api_key(arg)
 			exit(0)
+		elif option in ("--tags"):
+			set_tags(arg)
+		elif option in ("--text"):
+			set_text(arg)
 		elif option in ("--url_mode"):
 			set_url_mode(arg)
 		elif option in ('-h', '--help'):
@@ -108,9 +122,14 @@ def main():
 
 	signal.signal(signal.SIGINT, interrupt)
 
+	global tags, text
+
+	if not text and not tags:
+		tags = 'flickr'
+
 	while page < pages:
 		photos = flickr.photos_search(
-			tags="日本",per_page='100',media='photos', page=str(page),
+			tags=tags, text=text, per_page='100', media='photos', page=str(page),
 			extras='%(url_mode)s' %
 				{'url_mode' : UrlMode.str[url_mode]} )
 
@@ -124,7 +143,6 @@ def main():
 		page += 1
 
 		for photo in photos.iter('photo'):
-			#print( xml.etree.ElementTree.dump(photo) )
 			print( photo.attrib[UrlMode.str[url_mode]] )
 
 main()
