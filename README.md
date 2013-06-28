@@ -10,6 +10,15 @@ flickrapi
 
 Usage
 =====
+At first, you should save flickr API key to config file.
+
+```bash
+flickrget.py --set_api_key YOUR_API_KEY
+```
+
+API key saved to ~/.flickrget.cfg .
+To get API key, see http://www.flickr.com/services/apps/create/ for detail.
+
 Querying photo URL tagged with 'cat'. This usage try to output all of querying result.
 
 ```bash
