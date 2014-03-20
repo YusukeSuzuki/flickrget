@@ -156,5 +156,3 @@ def main():
 			if not output_count < max_out:
 				break
 
-main()
-
